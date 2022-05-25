@@ -71,7 +71,8 @@ const createWindow = async () => {
 
   mainWindow = new BrowserWindow({
     show: false,
-    width: 1024,
+    resizable: false,
+    width: 1200,
     height: 728,
     icon: getAssetPath('icon.png'),
     webPreferences: {
@@ -82,6 +83,8 @@ const createWindow = async () => {
   });
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
+
+  mainWindow.setMenuBarVisibility(false);
 
   mainWindow.on('ready-to-show', () => {
     if (!mainWindow) {
