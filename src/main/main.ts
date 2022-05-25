@@ -26,9 +26,36 @@ export default class AppUpdater {
 let mainWindow: BrowserWindow | null = null;
 
 ipcMain.on('ipc-example', async (event, arg) => {
-  const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-  console.log(msgTemplate(arg));
-  event.reply('ipc-example', msgTemplate('pong'));
+  const exec = require('child_process').exec;
+
+  if (arg[0] === 'status') {
+    exec('headsetcontrol -b', (error: any, stdout: any, stderr: any) => {
+      if (stdout) {
+        console.log(stdout.split('\n')[0]);
+        event.reply('ipc-example', stdout.split('\n')[0]);
+      }
+      if (stderr) {
+        console.log(stderr);
+      }
+      if (error !== null) {
+        console.log('exec error:' + error);
+      }
+    });
+  }
+
+  if (arg[0] === 'battery') {
+    exec('headsetcontrol -bc', (error: any, stdout: any, stderr: any) => {
+      if (stdout) {
+        console.log(stdout.split('\n')[0]);
+      }
+      if (stderr) {
+        console.log(stderr);
+      }
+      if (error !== null) {
+        console.log('exec error:' + error);
+      }
+    });
+  }
 });
 
 if (process.env.NODE_ENV === 'production') {
