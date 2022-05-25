@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { createStyles, Navbar, Group, Code, Container } from '@mantine/core';
+import { createStyles, Navbar, Group, Code } from '@mantine/core';
 import { AiOutlineHome, AiOutlineSetting } from 'react-icons/ai';
-import { BiHeadphone } from 'react-icons/bi';
+import { BiEqualizer, BiHeadphone } from 'react-icons/bi';
+import { useNavigate } from 'react-router-dom';
 
 const useStyles = createStyles((theme, _params, getRef) => {
   const icon = getRef('icon');
@@ -84,12 +85,14 @@ const useStyles = createStyles((theme, _params, getRef) => {
 });
 
 const data = [
-  { link: '', label: 'Home', icon: AiOutlineHome },
-  { link: '', label: 'Device Settings', icon: AiOutlineSetting },
+  { link: '/home', label: 'Home', icon: AiOutlineHome },
+  { link: '/equalizer', label: 'Equalizer', icon: BiEqualizer },
+  { link: '/settings', label: 'Device Settings', icon: AiOutlineSetting },
 ];
 
 export function NavbarSimple() {
   const { classes, cx } = useStyles();
+  const navigate = useNavigate();
   const [active, setActive] = useState('Home');
 
   const links = data.map((item) => (
@@ -102,6 +105,7 @@ export function NavbarSimple() {
       onClick={(event) => {
         event.preventDefault();
         setActive(item.label);
+        navigate(item.link);
       }}
     >
       <item.icon className={classes.linkIcon} />
