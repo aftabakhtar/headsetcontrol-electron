@@ -31,8 +31,11 @@ ipcMain.on('ipc-example', async (event, arg) => {
   if (arg[0] === 'status') {
     exec('headsetcontrol -b', (error: any, stdout: any, stderr: any) => {
       if (stdout) {
-        console.log(stdout.split('\n')[0]);
-        event.reply('ipc-example', stdout.split('\n')[0]);
+        if (!stdout.split('\n')[1].includes('Unavailable')) {
+          event.reply('ipc-example', stdout.split('\n')[0]);
+        } else {
+          event.reply('ipc-example', 'Unavailable');
+        }
       }
       if (stderr) {
         console.log(stderr);
