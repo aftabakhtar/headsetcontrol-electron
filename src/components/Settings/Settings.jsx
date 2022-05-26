@@ -1,5 +1,6 @@
 import {
   Badge,
+  Center,
   createStyles,
   Group,
   Paper,
@@ -7,13 +8,26 @@ import {
   SimpleGrid,
   Skeleton,
   Slider,
+  Switch,
   Text,
   ThemeIcon,
 } from '@mantine/core';
-import { BsBatteryHalf } from 'react-icons/bs';
+import {
+  BsBattery,
+  BsBatteryCharging,
+  BsBatteryFull,
+  BsBatteryHalf,
+  BsLightbulbFill,
+  BsLightbulbOffFill,
+} from 'react-icons/bs';
 import { useHeadsetStore } from '../../stores/useHeadsetStore';
 import { BiHeadphone } from 'react-icons/bi';
-import { setHeadsetSidetoneVolume } from '../../utils/headset-controls';
+import {
+  setHeadsetRGB,
+  setHeadsetSidetoneVolume,
+  setHeadsetSoundNotifications,
+} from '../../utils/headset-controls';
+import { IoNotifications, IoNotificationsOff } from 'react-icons/io5';
 
 const ICON_SIZE = 60;
 
@@ -43,9 +57,27 @@ export const Settings = () => {
   const battery = useHeadsetStore((state) => state.battery);
   const sidetoneVolume = useHeadsetStore((state) => state.sidetoneVolume);
   const setSidetoneVolume = useHeadsetStore((state) => state.setSidetoneVolume);
+  const rGB = useHeadsetStore((state) => state.rGB);
+  const setRGB = useHeadsetStore((state) => state.setHeadsetRGB);
+  const soundNotifications = useHeadsetStore(
+    (state) => state.soundNotifications
+  );
+  const setSoundNotifications = useHeadsetStore(
+    (state) => state.setSoundNotifications
+  );
 
   const adjustSidetoneVolume = (sidetoneVolume) => {
     setHeadsetSidetoneVolume(sidetoneVolume);
+  };
+
+  const adjustRGB = async (status) => {
+    setHeadsetRGB(status.currentTarget.checked);
+    await setRGB(status.currentTarget.checked);
+  };
+
+  const adjustSoundNotifications = (status) => {
+    setSoundNotifications(status.currentTarget.checked);
+    setHeadsetSoundNotifications(status.currentTarget.checked);
   };
 
   return (
@@ -63,15 +95,20 @@ export const Settings = () => {
               size={ICON_SIZE}
               radius={ICON_SIZE}
             >
-              <BsBatteryHalf size={34} />
+              {battery < 0 ? (
+                <BsBatteryCharging size={34} />
+              ) : battery < 30 ? (
+                <BsBattery size={34} />
+              ) : battery < 70 ? (
+                <BsBatteryHalf size={34} />
+              ) : (
+                <BsBatteryFull size={34} />
+              )}
             </ThemeIcon>
 
             <Text align="center" weight={700} className={classes.title}>
               Battery Remaining
             </Text>
-            {/*<Text color="dimmed" align="center" size="sm">*/}
-            {/*  {battery === -1 ? 'Charging' : 'Discharging'}*/}
-            {/*</Text>*/}
 
             <Group position="apart" mt="xs">
               <Text size="sm" color="dimmed">
@@ -97,6 +134,7 @@ export const Settings = () => {
             withBorder
             className={classes.card}
             mt={ICON_SIZE / 3}
+            style={{ marginTop: '2rem' }}
           >
             <ThemeIcon
               className={classes.icon}
@@ -150,6 +188,78 @@ export const Settings = () => {
               </Badge>
             </Group>
           </Paper>
+
+          <SimpleGrid cols={2} style={{ marginTop: '2rem' }}>
+            <Paper
+              radius="md"
+              withBorder
+              className={classes.card}
+              mt={ICON_SIZE / 3}
+            >
+              <ThemeIcon
+                className={classes.icon}
+                size={ICON_SIZE}
+                radius={ICON_SIZE}
+              >
+                {rGB ? (
+                  <BsLightbulbFill size={34} />
+                ) : (
+                  <BsLightbulbOffFill size={34} />
+                )}
+              </ThemeIcon>
+
+              <Text align="center" weight={700} className={classes.title}>
+                RGB Lighting
+              </Text>
+
+              <Group position="apart" mt="xl"></Group>
+
+              <Center>
+                <Switch
+                  onLabel={'ON'}
+                  offLabel={'OFF'}
+                  size={'xl'}
+                  onChange={adjustRGB}
+                  checked={rGB}
+                />
+              </Center>
+            </Paper>
+
+            <Paper
+              radius="md"
+              withBorder
+              className={classes.card}
+              mt={ICON_SIZE / 3}
+            >
+              <ThemeIcon
+                className={classes.icon}
+                size={ICON_SIZE}
+                radius={ICON_SIZE}
+              >
+                {soundNotifications ? (
+                  <IoNotifications size={30} />
+                ) : (
+                  <IoNotificationsOff size={30} />
+                )}
+              </ThemeIcon>
+
+              <Text align="center" weight={700} className={classes.title}>
+                Notification Sound
+              </Text>
+
+              <Group position="apart" mt="xl"></Group>
+
+              <Center>
+                <Switch
+                  onLabel={'ON'}
+                  offLabel={'OFF'}
+                  size={'xl'}
+                  onChange={adjustSoundNotifications}
+                  checked={soundNotifications}
+                />
+              </Center>
+            </Paper>
+          </SimpleGrid>
         </>
       ) : (
         <SimpleGrid style={{ marginTop: '1rem' }}>
