@@ -3,7 +3,6 @@ import {
   Card,
   Center,
   Code,
-  Grid,
   Group,
   Image,
   Paper,
@@ -13,25 +12,31 @@ import {
   Stack,
   Text,
 } from '@mantine/core';
-import { useState } from 'react';
-import { setHeadsetStatus } from '../../utils/headset-controls';
-import { BsBatteryHalf, BsFillLightbulbFill } from 'react-icons/bs';
+import {
+  BsBattery,
+  BsBatteryCharging,
+  BsBatteryFull,
+  BsBatteryHalf,
+  BsLightbulbFill,
+  BsLightbulbOffFill,
+} from 'react-icons/bs';
 import { BiHeadphone } from 'react-icons/bi';
-import { GiBattery50 } from 'react-icons/gi';
-import { useInterval } from '../../hooks/hooks';
-import { AiFillNotification } from 'react-icons/ai';
+import { useHeadsetStore } from '../../stores/useHeadsetStore';
+import { IoNotifications, IoNotificationsOff } from 'react-icons/io5';
 
 export const Home = () => {
-  useInterval(() => {
-    setHeadsetStatus(setHeadsetName);
-  }, 1000);
-  const [headsetName, setHeadsetName] = useState(null);
-
-  console.log(headsetName);
+  const headsetExists = useHeadsetStore((state) => state.headsetExists);
+  const headsetName = useHeadsetStore((state) => state.headsetName);
+  const batteryPercentage = useHeadsetStore((state) => state.battery);
+  const sidetoneVolume = useHeadsetStore((state) => state.sidetoneVolume);
+  const soundNotifications = useHeadsetStore(
+    (state) => state.soundNotifications
+  );
+  const rGB = useHeadsetStore((state) => state.rGB);
 
   return (
     <>
-      {headsetName ? (
+      {headsetExists ? (
         <>
           <Stack align={'center'} justify={'center'}>
             <Code color={'blue'} style={{ marginTop: '1rem' }}>
@@ -57,58 +62,40 @@ export const Home = () => {
             </Card>
           </Stack>
 
-          <Grid align={'center'} justify={'center'}>
-            <Grid.Col span={6} style={{ marginTop: '2rem' }}>
-              <Center>
-                <GiBattery50 size={50} />
-                <Text size={'lg'} style={{ marginLeft: '0.25rem' }}>
-                  30 %
-                </Text>
-              </Center>
-            </Grid.Col>
-
-            <Grid.Col span={6} style={{ marginTop: '2rem' }}>
-              <Center>
-                <BiHeadphone size={50} />
-                <Text size={'lg'} style={{ marginLeft: '0.75rem' }}>
-                  30 %
-                </Text>
-              </Center>
-            </Grid.Col>
-
-            <Grid.Col span={6} style={{ marginTop: '5rem' }}>
-              <Center>
-                <AiFillNotification size={50} />
-                <Text size={'lg'} style={{ marginLeft: '0.65rem' }}>
-                  ON
-                </Text>
-              </Center>
-            </Grid.Col>
-
-            <Grid.Col span={6} style={{ marginTop: '5rem' }}>
-              <Center>
-                <BsFillLightbulbFill size={50} />
-                <Text size={'lg'} style={{ marginLeft: '0.75rem' }}>
-                  ON
-                </Text>
-              </Center>
-            </Grid.Col>
-          </Grid>
-          <SimpleGrid cols={2} breakpoints={[{ maxWidth: 'sm', cols: 1 }]}>
-            <Paper withBorder radius="md" p="xs" key={'stat.label'}>
+          <SimpleGrid
+            cols={2}
+            style={{ marginTop: '3rem' }}
+            breakpoints={[{ maxWidth: 'sm', cols: 1 }]}
+          >
+            <Paper withBorder radius="md" p="xs">
               <Group>
                 <RingProgress
                   size={80}
                   roundCaps
                   thickness={8}
-                  sections={[{ value: 22, color: 'red' }]}
+                  sections={
+                    batteryPercentage < 0
+                      ? [{ value: 100, color: 'green' }]
+                      : batteryPercentage < 30
+                      ? [{ value: batteryPercentage, color: 'red' }]
+                      : batteryPercentage < 70
+                      ? [{ value: batteryPercentage, color: 'yellow' }]
+                      : [{ value: batteryPercentage, color: 'green' }]
+                  }
                   label={
                     <Center>
-                      <BsBatteryHalf size={30} />
+                      {batteryPercentage < 0 ? (
+                        <BsBatteryCharging size={30} />
+                      ) : batteryPercentage < 30 ? (
+                        <BsBattery size={30} />
+                      ) : batteryPercentage < 70 ? (
+                        <BsBatteryHalf size={30} />
+                      ) : (
+                        <BsBatteryFull size={30} />
+                      )}
                     </Center>
                   }
                 />
-
                 <div>
                   <Text
                     color="dimmed"
@@ -116,10 +103,121 @@ export const Home = () => {
                     transform="uppercase"
                     weight={700}
                   >
-                    {'test'}
+                    Battery Percentage
                   </Text>
                   <Text weight={700} size="xl">
-                    {'hello'}
+                    {batteryPercentage === -1
+                      ? 'Charging'
+                      : batteryPercentage + ' %'}
+                  </Text>
+                </div>
+              </Group>
+            </Paper>
+
+            <Paper withBorder radius="md" p="xs">
+              <Group>
+                <RingProgress
+                  size={80}
+                  roundCaps
+                  thickness={8}
+                  sections={
+                    sidetoneVolume < 30
+                      ? [{ value: sidetoneVolume, color: 'red' }]
+                      : sidetoneVolume < 70
+                      ? [{ value: sidetoneVolume, color: 'yellow' }]
+                      : [{ value: sidetoneVolume, color: 'green' }]
+                  }
+                  label={
+                    <Center>
+                      <BiHeadphone size={30} />
+                    </Center>
+                  }
+                />
+                <div>
+                  <Text
+                    color="dimmed"
+                    size="xs"
+                    transform="uppercase"
+                    weight={700}
+                  >
+                    Sidetone Volume
+                  </Text>
+                  <Text weight={700} size="xl">
+                    {sidetoneVolume} %
+                  </Text>
+                </div>
+              </Group>
+            </Paper>
+
+            <Paper withBorder radius="md" p="xs">
+              <Group>
+                <RingProgress
+                  size={80}
+                  roundCaps
+                  thickness={8}
+                  sections={
+                    rGB
+                      ? [{ value: 100, color: 'green' }]
+                      : [{ value: 100, color: 'red' }]
+                  }
+                  label={
+                    <Center>
+                      {rGB ? (
+                        <BsLightbulbFill size={30} />
+                      ) : (
+                        <BsLightbulbOffFill size={30} />
+                      )}
+                    </Center>
+                  }
+                />
+                <div>
+                  <Text
+                    color="dimmed"
+                    size="xs"
+                    transform="uppercase"
+                    weight={700}
+                  >
+                    RGB Lighting
+                  </Text>
+                  <Text weight={700} size="xl">
+                    {rGB ? 'ON' : 'OFF'}
+                  </Text>
+                </div>
+              </Group>
+            </Paper>
+
+            <Paper withBorder radius="md" p="xs">
+              <Group>
+                <RingProgress
+                  size={80}
+                  roundCaps
+                  thickness={8}
+                  sections={
+                    soundNotifications
+                      ? [{ value: 100, color: 'green' }]
+                      : [{ value: 100, color: 'red' }]
+                  }
+                  label={
+                    <Center>
+                      {soundNotifications ? (
+                        <IoNotifications size={30} />
+                      ) : (
+                        <IoNotificationsOff size={30} />
+                      )}
+                    </Center>
+                  }
+                />
+                <div>
+                  <Text
+                    color="dimmed"
+                    size="xs"
+                    transform="uppercase"
+                    weight={700}
+                  >
+                    Sound Notifications
+                  </Text>
+                  <Text weight={700} size="xl">
+                    {soundNotifications ? 'ON' : 'OFF'}
                   </Text>
                 </div>
               </Group>
