@@ -26,9 +26,33 @@ export const setHeadsetSidetoneVolume = (sidetoneVolume) => {
   ]);
   window.electron.ipcRenderer.once('sidetone', (arg) => {
     if (arg === 'Success!') {
-      console.log('done');
+      console.log('sidetone done');
     } else {
-      console.log('not');
+      console.log('sidetone failed');
+    }
+  });
+};
+
+export const setHeadsetRGB = (rGBStatus) => {
+  const status = rGBStatus ? 1 : 0;
+  window.electron.ipcRenderer.sendMessage('rgb', [status.toString()]);
+  window.electron.ipcRenderer.once('rgb', (arg) => {
+    if (arg === 'Success!') {
+      console.log('rgb done');
+    } else {
+      console.log('rgb failed');
+    }
+  });
+};
+
+export const setHeadsetSoundNotifications = (notificationStatus) => {
+  const status = notificationStatus ? 1 : 0;
+  window.electron.ipcRenderer.sendMessage('notification', [status.toString()]);
+  window.electron.ipcRenderer.once('notification', (arg) => {
+    if (arg === 'Success!') {
+      console.log('notification done');
+    } else {
+      console.log('notification failed');
     }
   });
 };
