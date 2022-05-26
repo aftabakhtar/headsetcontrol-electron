@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { createStyles, Navbar, Group, Code } from '@mantine/core';
 import { AiOutlineHome, AiOutlineSetting } from 'react-icons/ai';
-import { BiEqualizer, BiHeadphone } from 'react-icons/bi';
+import { BiEqualizer, BiHeadphone, BiMoon, BiSun } from 'react-icons/bi';
 import { useNavigate } from 'react-router-dom';
+import { useThemeStore } from '../../stores/useThemeStore';
 
 const useStyles = createStyles((theme, _params, getRef) => {
   const icon = getRef('icon');
@@ -91,6 +92,9 @@ const data = [
 ];
 
 export function NavbarSimple() {
+  const theme = useThemeStore((state) => state.theme);
+  const toggleTheme = useThemeStore((state) => state.toggleTheme);
+
   const { classes, cx } = useStyles();
   const navigate = useNavigate();
   const [active, setActive] = useState('Home');
@@ -127,10 +131,20 @@ export function NavbarSimple() {
         <a
           href="#"
           className={classes.link}
-          onClick={(event) => event.preventDefault()}
+          onClick={() => {
+            toggleTheme();
+          }}
         >
-          <BiHeadphone className={classes.linkIcon} />
-          <span>Change account</span>
+          {theme === 'dark' ? (
+            <BiSun className={classes.linkIcon} />
+          ) : (
+            <BiMoon className={classes.linkIcon} />
+          )}
+          {theme === 'dark' ? (
+            <span> Light Theme</span>
+          ) : (
+            <span> Dark Theme</span>
+          )}
         </a>
       </Navbar.Section>
     </Navbar>
