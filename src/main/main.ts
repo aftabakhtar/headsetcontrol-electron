@@ -79,6 +79,40 @@ ipcMain.on('sidetone', async (event, arg) => {
   });
 });
 
+ipcMain.on('rgb', async (event, arg) => {
+  const exec = require('child_process').exec;
+  const command = 'headsetcontrol -l ' + arg[0];
+
+  exec(command, (error: any, stdout: any, stderr: any) => {
+    if (stdout) {
+      event.reply('rgb', stdout.split('\n')[1]);
+    }
+    if (stderr) {
+      console.log(stderr);
+    }
+    if (error !== null) {
+      console.log('exec error:' + error);
+    }
+  });
+});
+
+ipcMain.on('notification', async (event, arg) => {
+  const exec = require('child_process').exec;
+  const command = 'headsetcontrol -n ' + arg[0];
+
+  exec(command, (error: any, stdout: any, stderr: any) => {
+    if (stdout) {
+      event.reply('notification', stdout.split('\n')[1]);
+    }
+    if (stderr) {
+      console.log(stderr);
+    }
+    if (error !== null) {
+      console.log('exec error:' + error);
+    }
+  });
+});
+
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
