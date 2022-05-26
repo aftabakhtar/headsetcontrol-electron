@@ -6,11 +6,14 @@ import {
   Progress,
   SimpleGrid,
   Skeleton,
+  Slider,
   Text,
   ThemeIcon,
 } from '@mantine/core';
 import { BsBatteryHalf } from 'react-icons/bs';
 import { useHeadsetStore } from '../../stores/useHeadsetStore';
+import { BiHeadphone } from 'react-icons/bi';
+import { setHeadsetSidetoneVolume } from '../../utils/headset-controls';
 
 const ICON_SIZE = 60;
 
@@ -37,6 +40,13 @@ const useStyles = createStyles((theme) => ({
 export const Settings = () => {
   const { classes } = useStyles();
   const headsetExists = useHeadsetStore((state) => state.headsetExists);
+  const battery = useHeadsetStore((state) => state.battery);
+  const sidetoneVolume = useHeadsetStore((state) => state.sidetoneVolume);
+  const setSidetoneVolume = useHeadsetStore((state) => state.setSidetoneVolume);
+
+  const adjustSidetoneVolume = (sidetoneVolume) => {
+    setHeadsetSidetoneVolume(sidetoneVolume);
+  };
 
   return (
     <>
@@ -57,28 +67,31 @@ export const Settings = () => {
             </ThemeIcon>
 
             <Text align="center" weight={700} className={classes.title}>
-              Swimming challenge
+              Battery Remaining
             </Text>
-            <Text color="dimmed" align="center" size="sm">
-              32 km / week
-            </Text>
+            {/*<Text color="dimmed" align="center" size="sm">*/}
+            {/*  {battery === -1 ? 'Charging' : 'Discharging'}*/}
+            {/*</Text>*/}
 
             <Group position="apart" mt="xs">
               <Text size="sm" color="dimmed">
                 Progress
               </Text>
               <Text size="sm" color="dimmed">
-                62%
+                {battery} %
               </Text>
             </Group>
 
-            <Progress value={62} mt={5} />
+            <Progress value={battery} mt={5} />
 
             <Group position="apart" mt="md">
-              <Text size="sm">20 / 36 km</Text>
-              <Badge size="sm">4 days left</Badge>
+              <Text size="sm"></Text>
+              <Badge size="sm">
+                {battery === -1 ? 'Charging' : 'Discharging'}
+              </Badge>
             </Group>
           </Paper>
+
           <Paper
             radius="md"
             withBorder
@@ -90,30 +103,51 @@ export const Settings = () => {
               size={ICON_SIZE}
               radius={ICON_SIZE}
             >
-              <BsBatteryHalf size={34} />
+              <BiHeadphone size={34} />
             </ThemeIcon>
 
             <Text align="center" weight={700} className={classes.title}>
-              Swimming challenge
+              Sidetone Volume
             </Text>
-            <Text color="dimmed" align="center" size="sm">
-              32 km / week
-            </Text>
+            {/*<Text color="dimmed" align="center" size="sm">*/}
+            {/*  Adjust slider*/}
+            {/*</Text>*/}
 
             <Group position="apart" mt="xs">
               <Text size="sm" color="dimmed">
                 Progress
               </Text>
               <Text size="sm" color="dimmed">
-                62%
+                {sidetoneVolume}
               </Text>
             </Group>
 
-            <Progress value={62} mt={5} />
+            <Slider
+              marks={[
+                { value: 0, label: '0%' },
+                { value: 20, label: '20%' },
+                { value: 50, label: '50%' },
+                { value: 80, label: '80%' },
+                { value: 100, label: '100%' },
+              ]}
+              defaultValue={sidetoneVolume}
+              onChange={setSidetoneVolume}
+              onChangeEnd={adjustSidetoneVolume}
+            />
 
-            <Group position="apart" mt="md">
-              <Text size="sm">20 / 36 km</Text>
-              <Badge size="sm">4 days left</Badge>
+            <Group position="apart" mt="md" style={{ marginTop: '2rem' }}>
+              <Text size="sm"></Text>
+              <Badge size="sm">
+                {sidetoneVolume < 30
+                  ? 'Too Low'
+                  : sidetoneVolume < 50
+                  ? 'Low'
+                  : sidetoneVolume < 70
+                  ? 'Okay'
+                  : sidetoneVolume < 85
+                  ? 'Loud'
+                  : 'Very Loud'}
+              </Badge>
             </Group>
           </Paper>
         </>
