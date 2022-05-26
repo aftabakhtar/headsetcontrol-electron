@@ -14,6 +14,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+import { exec } from 'child_process';
 
 export default class AppUpdater {
   constructor() {
@@ -25,40 +26,40 @@ export default class AppUpdater {
 
 let mainWindow: BrowserWindow | null = null;
 
-ipcMain.on('ipc-example', async (event, arg) => {
+ipcMain.on('status', async (event, arg) => {
   const exec = require('child_process').exec;
 
-  if (arg[0] === 'status') {
-    exec('headsetcontrol -b', (error: any, stdout: any, stderr: any) => {
-      if (stdout) {
-        if (!stdout.split('\n')[1].includes('Unavailable')) {
-          event.reply('ipc-example', stdout.split('\n')[0]);
-        } else {
-          event.reply('ipc-example', 'Unavailable');
-        }
+  exec('headsetcontrol -b', (error: any, stdout: any, stderr: any) => {
+    if (stdout) {
+      if (!stdout.split('\n')[1].includes('Unavailable')) {
+        event.reply('status', stdout.split('\n')[0]);
+      } else {
+        event.reply('status', 'Unavailable');
       }
-      if (stderr) {
-        console.log(stderr);
-      }
-      if (error !== null) {
-        console.log('exec error:' + error);
-      }
-    });
-  }
+    }
+    if (stderr) {
+      console.log(stderr);
+    }
+    if (error !== null) {
+      console.log('exec error:' + error);
+    }
+  });
+});
 
-  if (arg[0] === 'battery') {
-    exec('headsetcontrol -bc', (error: any, stdout: any, stderr: any) => {
-      if (stdout) {
-        console.log(stdout.split('\n')[0]);
-      }
-      if (stderr) {
-        console.log(stderr);
-      }
-      if (error !== null) {
-        console.log('exec error:' + error);
-      }
-    });
-  }
+ipcMain.on('battery', async (event, arg) => {
+  const exec = require('child_process').exec;
+
+  exec('headsetcontrol -bc', (error: any, stdout: any, stderr: any) => {
+    if (stdout) {
+      event.reply('battery', stdout.split('\n')[0]);
+    }
+    if (stderr) {
+      console.log(stderr);
+    }
+    if (error !== null) {
+      console.log('exec error:' + error);
+    }
+  });
 });
 
 if (process.env.NODE_ENV === 'production') {
