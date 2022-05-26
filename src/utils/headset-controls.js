@@ -17,3 +17,18 @@ export const setBattery = (setBatteryPercentage) => {
     setBatteryPercentage(parseInt(arg));
   });
 };
+
+export const setHeadsetSidetoneVolume = (sidetoneVolume) => {
+  const adjustedSidetone = parseInt((128 * (sidetoneVolume / 100)).toString());
+
+  window.electron.ipcRenderer.sendMessage('sidetone', [
+    adjustedSidetone.toString(),
+  ]);
+  window.electron.ipcRenderer.once('sidetone', (arg) => {
+    if (arg === 'Success!') {
+      console.log('done');
+    } else {
+      console.log('not');
+    }
+  });
+};
