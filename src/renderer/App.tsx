@@ -7,7 +7,9 @@ import { Settings } from '../components/Settings/Settings';
 import { useInterval } from '../hooks/hooks';
 import {
   setBattery,
+  setHeadsetRGB,
   setHeadsetSidetoneVolume,
+  setHeadsetSoundNotifications,
   setHeadsetStatus,
 } from '../utils/headset-controls';
 import { useHeadsetStore } from '../stores/useHeadsetStore';
@@ -24,11 +26,17 @@ export default function App() {
   const setHeadsetExists = useHeadsetStore((state) => state.setHeadsetExits);
   const headsetExists = useHeadsetStore((state) => state.headsetExists);
   const sidetoneVolume = useHeadsetStore((state) => state.sidetoneVolume);
+  const rGB = useHeadsetStore((state) => state.rGB);
+  const soundNotifications = useHeadsetStore(
+    (state) => state.soundNotifications
+  );
 
   if (headsetExists) {
     useEffect(() => {
       console.log('Loading last settings...');
       setHeadsetSidetoneVolume(sidetoneVolume);
+      setHeadsetRGB(rGB);
+      setHeadsetSoundNotifications(soundNotifications);
     }, []);
   }
 
