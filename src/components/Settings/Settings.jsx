@@ -23,6 +23,8 @@ import {
 import { useHeadsetStore } from '../../stores/useHeadsetStore';
 import { BiHeadphone } from 'react-icons/bi';
 import {
+  displayRGBNotification,
+  displaySoundNotificationsNotification,
   setHeadsetRGB,
   setHeadsetSidetoneVolume,
   setHeadsetSoundNotifications,
@@ -71,11 +73,13 @@ export const Settings = () => {
   };
 
   const adjustRGB = async (status) => {
+    displayRGBNotification(status.currentTarget.checked);
     setHeadsetRGB(status.currentTarget.checked);
     await setRGB(status.currentTarget.checked);
   };
 
   const adjustSoundNotifications = (status) => {
+    displaySoundNotificationsNotification(status.currentTarget.checked);
     setSoundNotifications(status.currentTarget.checked);
     setHeadsetSoundNotifications(status.currentTarget.checked);
   };
