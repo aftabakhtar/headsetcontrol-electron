@@ -6,6 +6,7 @@ import { useThemeStore } from '../stores/useThemeStore';
 import { Settings } from '../components/Settings/Settings';
 import { useInterval } from '../hooks/hooks';
 import {
+  displayLowBatteryNotification,
   setBattery,
   setHeadsetRGB,
   setHeadsetSidetoneVolume,
@@ -30,6 +31,7 @@ export default function App() {
   const soundNotifications = useHeadsetStore(
     (state) => state.soundNotifications
   );
+  const batteryPercentage = useHeadsetStore((state) => state.battery);
 
   if (headsetExists) {
     useEffect(() => {
@@ -38,6 +40,10 @@ export default function App() {
       setHeadsetRGB(rGB);
       setHeadsetSoundNotifications(soundNotifications);
     }, []);
+  }
+
+  if (batteryPercentage > 0 && batteryPercentage <= 15) {
+    displayLowBatteryNotification();
   }
 
   const theme = useThemeStore((state) => state.theme);
