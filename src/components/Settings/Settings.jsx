@@ -115,11 +115,11 @@ export const Settings = () => {
                 Progress
               </Text>
               <Text size="sm" color="dimmed">
-                {battery} %
+                {battery === -1 ? 'Charging' : battery + ' %'}
               </Text>
             </Group>
 
-            <Progress value={battery} mt={5} />
+            <Progress value={battery === -1 ? 100 : battery} mt={5} />
 
             <Group position="apart" mt="md">
               <Text size="sm"></Text>
