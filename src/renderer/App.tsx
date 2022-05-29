@@ -33,14 +33,14 @@ export default function App() {
   );
   const batteryPercentage = useHeadsetStore((state) => state.battery);
 
-  if (headsetExists) {
-    useEffect(() => {
+  useEffect(() => {
+    if (headsetExists) {
       console.log('Loading last settings...');
       setHeadsetSidetoneVolume(sidetoneVolume);
       setHeadsetRGB(rGB);
       setHeadsetSoundNotifications(soundNotifications);
-    }, []);
-  }
+    }
+  }, []);
 
   if (batteryPercentage > 0 && batteryPercentage <= 15) {
     displayLowBatteryNotification();
