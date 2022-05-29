@@ -56,3 +56,27 @@ export const setHeadsetSoundNotifications = (notificationStatus) => {
     }
   });
 };
+
+export const displayLowBatteryNotification = () => {
+  const NOTIFICATION_TITLE = 'Low Battery';
+  const NOTIFICATION_BODY =
+    'The battery is critically low. Please consider charging the headsets.';
+  new Notification(NOTIFICATION_TITLE, { body: NOTIFICATION_BODY });
+};
+
+export const displayRGBNotification = (rGBStatus) => {
+  const status = rGBStatus ? 'ON' : 'OFF';
+  const NOTIFICATION_TITLE = 'RGB ' + status;
+  const NOTIFICATION_BODY = 'The RGB lighting is being turned ' + status;
+  new Notification(NOTIFICATION_TITLE, { body: NOTIFICATION_BODY });
+};
+
+export const displaySoundNotificationsNotification = (
+  soundNotificationStatus
+) => {
+  const status = soundNotificationStatus ? 'ON' : 'OFF';
+  const NOTIFICATION_TITLE = 'Sound Notifications ' + status;
+  const NOTIFICATION_BODY =
+    'The sound notifications are being turned ' + status;
+  new Notification(NOTIFICATION_TITLE, { body: NOTIFICATION_BODY });
+};
