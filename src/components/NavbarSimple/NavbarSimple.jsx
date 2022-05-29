@@ -87,7 +87,7 @@ const useStyles = createStyles((theme, _params, getRef) => {
 
 const data = [
   { link: '/home', label: 'Home', icon: AiOutlineHome },
-  { link: '/equalizer', label: 'Equalizer', icon: BiEqualizer },
+  // { link: '/equalizer', label: 'Equalizer', icon: BiEqualizer },
   { link: '/settings', label: 'Device Settings', icon: AiOutlineSetting },
 ];
 
@@ -121,8 +121,8 @@ export function NavbarSimple() {
     <Navbar height={700} width={{ sm: 300 }} p="md">
       <Navbar.Section grow>
         <Group className={classes.header} position="apart">
-          <h2>LOGO</h2>
-          <Code sx={{ fontWeight: 700 }}>v3.1.2</Code>
+          <h2>Headset Control</h2>
+          <Code sx={{ fontWeight: 700 }}>v0.0.1</Code>
         </Group>
         {links}
       </Navbar.Section>
